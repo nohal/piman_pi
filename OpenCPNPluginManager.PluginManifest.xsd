@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema
+    targetNamespace="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/PluginManifest"
+    xmlns="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/PluginManifest"
+    xmlns:pluginManifest="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/PluginManifest"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="PluginManifest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="pluginManifest:PluginName" minOccurs="1" maxOccurs="1"> </xs:element>
+                <xs:element ref="pluginManifest:Description" minOccurs="1" maxOccurs="1"> </xs:element>
+                <xs:element ref="pluginManifest:CommonData" minOccurs="0" maxOccurs="1"> </xs:element>
+                <xs:element ref="pluginManifest:PlatformData" minOccurs="1" maxOccurs="unbounded"> </xs:element>
+                <xs:element ref="pluginManifest:Dependency" minOccurs="0" maxOccurs="unbounded">
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Version" type="xs:int" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Manifest format version
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        A plugin system name, such as xxx_pi
+                        Will be used to create the directory to store the plug-in, to reference the plug-in in the dependencies, etc.
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="IconUrl" type="xs:anyURI" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        URL of the icon image - PNG, 32x32px
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="ScreenshotUrl" type="xs:anyURI" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        URL of the screenshot image, PNG
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="HomepageUrl" type="xs:anyURI" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        URL of the plug-in website
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Author" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        Author name
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="ReleaseDate" type="xs:dateTime" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Release date
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="VersionMajor" type="xs:int" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Major version number
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="VersionMinor" type="xs:int" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Minor version number
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="APILevelMajor" type="xs:int" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Major API Version needed by this version of the plug-in
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="APILevelMinor" type="xs:int" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Minor API Version needed by this version of the plug-in
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PluginName">
+        <xs:annotation>
+            <xs:documentation>
+                The human readable name of the plugin, such as "Climatology"
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Description">
+        <xs:annotation>
+            <xs:documentation>
+                Plugin description text
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="CommonData">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>
+                    Location of a file with platform independent part of the plugin, typically data, documentation, etc.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:all>
+                <xs:element ref="pluginManifest:PostInstallMessage" minOccurs="0" maxOccurs="1">
+                </xs:element>
+            </xs:all>
+            <xs:attribute name="Url" type="xs:anyURI" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Download URL
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Size" type="xs:int" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        File size in bytes
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Checksum" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        MD5 checksum
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PostInstallMessage">
+        <xs:annotation>
+            <xs:documentation>
+                Text to show to the user after the installation task is completed
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="PlatformData">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="pluginManifest:PostInstallAction" minOccurs="0"
+                    maxOccurs="unbounded"> </xs:element>
+                <xs:element ref="pluginManifest:PostInstallMessage" minOccurs="0" maxOccurs="1">
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Platform" type="pluginManifest:Platform" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Platform
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Url" type="xs:anyURI" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        Download URL
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Size" type="xs:int" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        File size in bytes
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Checksum" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        MD5 Checksum
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="Platform">
+        <xs:annotation>
+            <xs:documentation>
+                Supported platform identifier
+                
+                &lt;xs:restriction base="xs:string"&gt;
+                &lt;xs:enumeration value="Windows" /&gt;
+                &lt;xs:enumeration value="Linux32" /&gt;
+                &lt;xs:enumeration value="Linux64" /&gt;
+                &lt;xs:enumeration value="Mac" /&gt;
+                &lt;xs:enumeration value="LinuxArmHf" /&gt;
+                &lt;/xs:restriction&gt;
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Windows"/>
+            <xs:enumeration value="Linux32"/>
+            <xs:enumeration value="Linux64"/>
+            <xs:enumeration value="Mac"/>
+            <xs:enumeration value="LinuxArmHf"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="PostInstallAction">
+        <xs:annotation>
+            <xs:documentation>
+                Command to be executed after the installation is finished
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="Dependency">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>
+                    Dependency on another plug-in
+                    The element value is PluginManifest.Name of the plug-in on which we depend
+                </xs:documentation>
+            </xs:annotation>
+            <xs:attribute name="Type" type="pluginManifest:DependencyType" use="required"> </xs:attribute>
+            <xs:attribute name="Plugin" type="xs:string" use="required"> </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:simpleType name="DependencyType">
+        <xs:annotation>
+            <xs:documentation>
+                Type of the dependency
+                
+                &lt;xs:restriction base="xs:string"&gt;
+                &lt;xs:enumeration value="Recommended" /&gt;
+                &lt;xs:enumeration value="Required" /&gt;
+                &lt;/xs:restriction&gt;
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Recommended"/>
+            <xs:enumeration value="Required"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

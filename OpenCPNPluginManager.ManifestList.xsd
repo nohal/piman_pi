@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema targetNamespace="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/ManifestList"
+    xmlns="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/ManifestList"
+    xmlns:manifestList="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/ManifestList"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="ManifestList">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="manifestList:Manifest" minOccurs="1" maxOccurs="unbounded">
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Version" type="xs:int" use="required"> </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Manifest">
+        <xs:complexType>
+            <xs:attribute name="Url" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:anyURI"/>
+                </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Name" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:minLength value="4"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
