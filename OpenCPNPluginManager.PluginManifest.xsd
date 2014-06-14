@@ -9,10 +9,9 @@
             <xs:sequence>
                 <xs:element ref="pluginManifest:PluginName" minOccurs="1" maxOccurs="1"> </xs:element>
                 <xs:element ref="pluginManifest:Description" minOccurs="1" maxOccurs="1"> </xs:element>
-                <xs:element ref="pluginManifest:CommonData" minOccurs="0" maxOccurs="1"> </xs:element>
+                <xs:element ref="pluginManifest:CommonData" minOccurs="0" maxOccurs="unbounded"> </xs:element>
                 <xs:element ref="pluginManifest:PlatformData" minOccurs="1" maxOccurs="unbounded"> </xs:element>
-                <xs:element ref="pluginManifest:Dependency" minOccurs="0" maxOccurs="unbounded">
-                </xs:element>
+                <xs:element ref="pluginManifest:Dependency" minOccurs="0" maxOccurs="unbounded"></xs:element>
             </xs:sequence>
             <xs:attribute name="Version" type="xs:int" use="required">
                 <xs:annotation>
@@ -154,6 +153,14 @@
                 </xs:annotation>
 
             </xs:attribute>
+            <xs:attribute name="Description" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        Short description of the dependency (shown to the user)
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
     <xs:element name="PostInstallMessage">
@@ -209,14 +216,6 @@
         <xs:annotation>
             <xs:documentation>
                 Supported platform identifier
-                
-                &lt;xs:restriction base="xs:string"&gt;
-                &lt;xs:enumeration value="Windows" /&gt;
-                &lt;xs:enumeration value="Linux32" /&gt;
-                &lt;xs:enumeration value="Linux64" /&gt;
-                &lt;xs:enumeration value="Mac" /&gt;
-                &lt;xs:enumeration value="LinuxArmHf" /&gt;
-                &lt;/xs:restriction&gt;
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">
@@ -244,17 +243,28 @@
             </xs:annotation>
             <xs:attribute name="Type" type="pluginManifest:DependencyType" use="required"> </xs:attribute>
             <xs:attribute name="Plugin" type="xs:string" use="required"> </xs:attribute>
+            <xs:attribute name="MinimalVersionMajor" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        Minimal required major version of the dependency
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="MinimalVersionMinor" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        Minimal required minor version of the dependency
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
         </xs:complexType>
     </xs:element>
     <xs:simpleType name="DependencyType">
         <xs:annotation>
             <xs:documentation>
                 Type of the dependency
-                
-                &lt;xs:restriction base="xs:string"&gt;
-                &lt;xs:enumeration value="Recommended" /&gt;
-                &lt;xs:enumeration value="Required" /&gt;
-                &lt;/xs:restriction&gt;
             </xs:documentation>
         </xs:annotation>
         <xs:restriction base="xs:string">

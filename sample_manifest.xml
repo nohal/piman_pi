@@ -18,6 +18,7 @@
     <CommonData Url="http://www.tempuri.org/data.xz" Size="100000" Checksum="ec727fd34069730a61cd0a86027989c2">
         <PostInstallMessage>Plug-in was successfully installed</PostInstallMessage>
     </CommonData>
+    <CommonData Url="http://www.tempuri.org/data1.xz" Size="100000" Checksum="ec727fd34069730a61cd0a86027989c2" Description="More detailed data"/>
     <PlatformData Platform="Windows" Url="http://www.tempuri.org/win.xz" Size="10000" Checksum="ec727fd34069730a61cd0a86027989c2">
         <PostInstallAction>dir C:</PostInstallAction>
         <PostInstallAction>dir D:</PostInstallAction>
@@ -38,5 +39,5 @@
         <PostInstallMessage>Running on Mac OS X</PostInstallMessage>
     </PlatformData>
     <Dependency Type="Recommended" Plugin="grib_pi" />
-    <Dependency Type="Required" Plugin="dashboard_pi" />
+    <Dependency Type="Required" Plugin="dashboard_pi" MinimalVersionMajor="1" MinimalVersionMinor="2"/>
 </PluginManifest>
