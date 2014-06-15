@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PluginManifest xmlns="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/PluginManifest"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/PluginManifest OpenCPNPluginManager.PluginManifest.xsd"
+ Version="1"
+ Name="test_pi"
+ IconUrl="http://localhost/icon_32x32.png"
+ ScreenshotUrl="http://localhost/screenshot_200x150.png"
+ HomepageUrl="http://localhost/"
+ Author="John Doe Jr."
+ ReleaseDate="2006-05-04T18:13:51.0"
+ VersionMajor="1"
+ VersionMinor="1"
+ APILevelMajor="1"
+ APILevelMinor="10">
+    <PluginName>Test Plug-in</PluginName>
+    <Description>This is a description of the plug-in</Description>
+    <CommonData Url="http://localhost/data.tar.xz" Size="188" Checksum="25c4de8696df98a431a9a68b1f9707ed" Type="Recommended">
+        <PostInstallMessage>Plug-in was successfully installed</PostInstallMessage>
+    </CommonData>
+    <CommonData Url="http://localhost/data1.tar.xz" Size="188" Checksum="276a85ef2b38c58073def8e2988227a2" Description="More detailed data" Type="Recommended"/>
+    <PlatformData Platform="Windows" Url="http://localhost/l64.tar.xz" Size="204" Checksum="9e94047b4e857bcaa73ea10515401b02" Type="Required">
+        <PostInstallAction>chmod +x binary.bin</PostInstallAction>
+        <PostInstallMessage>Running on Windows</PostInstallMessage>
+    </PlatformData>
+</PluginManifest>
