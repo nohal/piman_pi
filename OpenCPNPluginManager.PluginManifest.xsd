@@ -156,11 +156,12 @@
             <xs:attribute name="Description" type="xs:string" use="optional">
                 <xs:annotation>
                     <xs:documentation>
-                        Short description of the dependency (shown to the user)
+                        Short description of the component (shown to the user)
                     </xs:documentation>
                 </xs:annotation>
 
             </xs:attribute>
+            <xs:attribute name="Type" type="pluginManifest:DependencyType" use="required"> </xs:attribute>
         </xs:complexType>
     </xs:element>
     <xs:element name="PostInstallMessage">
@@ -210,6 +211,15 @@
                 </xs:annotation>
 
             </xs:attribute>
+            <xs:attribute name="Description" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>
+                        Short description of the component (shown to the user)
+                    </xs:documentation>
+                </xs:annotation>
+
+            </xs:attribute>
+            <xs:attribute name="Type" type="pluginManifest:DependencyType" use="required"> </xs:attribute>
         </xs:complexType>
     </xs:element>
     <xs:simpleType name="Platform">
