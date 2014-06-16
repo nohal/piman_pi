@@ -3,7 +3,7 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.opencpn.org/pluginmanager/OpenCPNPluginManager/ManifestList OpenCPNPluginManager.ManifestList.xsd"
  Version="1">
-   <Manifest Url="http://www.tempuri.org/sample_manifest.xml" Name="test_pi" />
-   <Manifest Url="http://www.tempuri.org/sample_manifest1.xml" Name="test1_pi" />
-   <Manifest Url="http://www.tempuri.org/sample_manifest2.xml" Name="test2_pi" />
+   <Manifest Url="http://localhost/sample_manifest.xml" Name="test_pi" />
+   <Manifest Url="http://localhost/sample_manifest1.xml" Name="test1_pi" />
+   <Manifest Url="http://localhost/sample_manifest2.xml" Name="test2_pi" />
 </ManifestList>
