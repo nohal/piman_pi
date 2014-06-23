@@ -44,6 +44,8 @@
 #include "md5.h"
 #include "ManifestList.h"
 #include "PluginManifest.h"
+#include "gui.h"
+#include "gui_impl.h"
 
 #include <vector>
 #include <string>
@@ -106,13 +108,19 @@ public:
     wxString GetCommonName();
     wxString GetShortDescription();
     wxString GetLongDescription();
+    wxImage* GetPluginIcon(PluginManifest* manifest);
+    wxImage* GetPluginScreenshot(PluginManifest* manifest);
+    void UpdateManifestsFromNet();
 
 //    The override PlugIn Methods
     int GetToolbarToolCount ( void );
     void OnToolbarToolCallback ( int id );
+    void ShowPreferencesDialog( wxWindow* parent );
 
 // Other public methods
     void SetColorScheme ( PI_ColorScheme cs );
+    
+    wxString GetLastUpdateDate() { return wxDateTime(m_iLastUpdate).FormatDate(); }
     
 private:
     bool LoadConfig ( void );
@@ -141,6 +149,11 @@ private:
     
     long m_iLastUpdate;
     wxString m_manifestListUrl;
+    bool m_bCheckAtStartup;
+    int m_iCheckAtStartupInterval;
+    bool m_bDownloadPictures;
+    bool m_bAutoUpdate;
+    wxString m_autoUpdateBlacklist;
     
     ManifestList m_manifest_list;
     std::vector<PluginManifest> m_plugin_manifests;
@@ -149,6 +162,9 @@ private:
     wxString m_data_dir;
     wxString m_plugins_dir;
     wxString m_cached_manifest_list;
+    
+    PluginMgrDlgImpl *m_pPimanDlg;
+    PimanSettingsDlgImpl *m_pSettingsDlg;
 };
 
 #endif

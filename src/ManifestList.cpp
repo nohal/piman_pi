@@ -47,6 +47,7 @@ void ManifestList::Load(const char* XmlFile)
 
 void ManifestList::Load(pugi::xml_document* doc)
 {
+    Manifests.clear();
     pugi::xml_node plugin_list = doc->child("ManifestList");
     version = plugin_list.attribute("Version").as_int();
     for (pugi::xml_node plugin = plugin_list.child("Manifest"); plugin; plugin = plugin.next_sibling("Manifest"))

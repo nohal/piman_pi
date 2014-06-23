@@ -11,7 +11,7 @@
 
 PluginMgrDlg::PluginMgrDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	this->SetSizeHints( wxSize( 620,450 ), wxDefaultSize );
 	
 	wxBoxSizer* bSizerPluginMgr;
 	bSizerPluginMgr = new wxBoxSizer( wxVERTICAL );
@@ -23,11 +23,21 @@ PluginMgrDlg::PluginMgrDlg( wxWindow* parent, wxWindowID id, const wxString& tit
 	m_stLastUpdate->Wrap( -1 );
 	bSizerLastUpdate->Add( m_stLastUpdate, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
-	m_stLastUpdateVal = new wxStaticText( this, wxID_ANY, _("01.01.2014 14:30:00"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stLastUpdateVal = new wxStaticText( this, wxID_ANY, _("01.01.2014"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stLastUpdateVal->Wrap( -1 );
 	m_stLastUpdateVal->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
 	bSizerLastUpdate->Add( m_stLastUpdateVal, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_stUpdatesAvailable = new wxStaticText( this, wxID_ANY, _("Updates available:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stUpdatesAvailable->Wrap( -1 );
+	bSizerLastUpdate->Add( m_stUpdatesAvailable, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_stUpdatesAvailableVal = new wxStaticText( this, wxID_ANY, _("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stUpdatesAvailableVal->Wrap( -1 );
+	m_stUpdatesAvailableVal->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+	
+	bSizerLastUpdate->Add( m_stUpdatesAvailableVal, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 	
 	
 	bSizerLastUpdate->Add( 0, 0, 1, wxEXPAND, 5 );
@@ -46,7 +56,6 @@ PluginMgrDlg::PluginMgrDlg( wxWindow* parent, wxWindowID id, const wxString& tit
 	
 	m_swPlugins = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL );
 	m_swPlugins->SetScrollRate( 5, 5 );
-	wxBoxSizer* bSizerPlugins;
 	bSizerPlugins = new wxBoxSizer( wxVERTICAL );
 	
 	m_panelPlugin = new wxPanel( m_swPlugins, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), wxTAB_TRAVERSAL );
@@ -55,21 +64,6 @@ PluginMgrDlg::PluginMgrDlg( wxWindow* parent, wxWindowID id, const wxString& tit
 	m_staticline1 = new wxStaticLine( m_swPlugins, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	bSizerPlugins->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
 	
-	m_panelPlugin1 = new wxPanel( m_swPlugins, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), wxTAB_TRAVERSAL );
-	bSizerPlugins->Add( m_panelPlugin1, 1, wxEXPAND | wxALL, 5 );
-	
-	m_staticline2 = new wxStaticLine( m_swPlugins, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizerPlugins->Add( m_staticline2, 0, wxEXPAND | wxALL, 5 );
-	
-	m_panelPlugin2 = new wxPanel( m_swPlugins, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), wxTAB_TRAVERSAL );
-	bSizerPlugins->Add( m_panelPlugin2, 1, wxEXPAND | wxALL, 5 );
-	
-	m_staticline21 = new wxStaticLine( m_swPlugins, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizerPlugins->Add( m_staticline21, 0, wxEXPAND | wxALL, 5 );
-	
-	m_panelPlugin21 = new wxPanel( m_swPlugins, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), wxTAB_TRAVERSAL );
-	bSizerPlugins->Add( m_panelPlugin21, 1, wxEXPAND | wxALL, 5 );
-	
 	
 	m_swPlugins->SetSizer( bSizerPlugins );
 	m_swPlugins->Layout();
@@ -77,11 +71,33 @@ PluginMgrDlg::PluginMgrDlg( wxWindow* parent, wxWindowID id, const wxString& tit
 	bSizerPluginMgr->Add( m_swPlugins, 1, wxEXPAND | wxALL, 5 );
 	
 	
-	bSizerPluginMgr->Add( 0, 0, 1, wxEXPAND, 5 );
+	bSizerPluginMgr->Add( 0, 0, 0, wxEXPAND, 5 );
 	
-	m_stTotals = new wxStaticText( this, wxID_ANY, _("Total to download: 10MB"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_stTotals->Wrap( -1 );
-	bSizerPluginMgr->Add( m_stTotals, 0, wxALL, 5 );
+	wxBoxSizer* bSizerTotals;
+	bSizerTotals = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_stToInstall = new wxStaticText( this, wxID_ANY, _("Selected for installation:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stToInstall->Wrap( -1 );
+	bSizerTotals->Add( m_stToInstall, 0, wxALL, 5 );
+	
+	m_stToInstallVal = new wxStaticText( this, wxID_ANY, _("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stToInstallVal->Wrap( -1 );
+	m_stToInstallVal->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+	
+	bSizerTotals->Add( m_stToInstallVal, 0, wxALL, 5 );
+	
+	m_stToDownload = new wxStaticText( this, wxID_ANY, _("Total to download:"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stToDownload->Wrap( -1 );
+	bSizerTotals->Add( m_stToDownload, 0, wxALL, 5 );
+	
+	m_stToDownloadVal = new wxStaticText( this, wxID_ANY, _("10MB"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stToDownloadVal->Wrap( -1 );
+	m_stToDownloadVal->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+	
+	bSizerTotals->Add( m_stToDownloadVal, 0, wxALL, 5 );
+	
+	
+	bSizerPluginMgr->Add( bSizerTotals, 0, wxEXPAND, 5 );
 	
 	wxBoxSizer* bSizerButtons;
 	bSizerButtons = new wxBoxSizer( wxHORIZONTAL );
@@ -145,7 +161,7 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_stVerAvailableLabel->Wrap( -1 );
 	fgSizerVersions->Add( m_stVerAvailableLabel, 0, wxALL, 5 );
 	
-	m_stVerAvailable = new wxStaticText( this, wxID_ANY, _("0.10 (2014-03-01)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stVerAvailable = new wxStaticText( this, wxID_ANY, _("%i.%i (%s)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stVerAvailable->Wrap( -1 );
 	m_stVerAvailable->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
@@ -155,7 +171,7 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_stVerInstalledLabel->Wrap( -1 );
 	fgSizerVersions->Add( m_stVerInstalledLabel, 0, wxALL, 5 );
 	
-	m_stVerInstalled = new wxStaticText( this, wxID_ANY, _("None"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stVerInstalled = new wxStaticText( this, wxID_ANY, _("%i.%i"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stVerInstalled->Wrap( -1 );
 	m_stVerInstalled->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
@@ -164,7 +180,7 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	bSizerPluginInfo->Add( fgSizerVersions, 0, wxEXPAND, 5 );
 	
-	m_stDescription = new wxStaticText( this, wxID_ANY, _("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stDescription = new wxStaticText( this, wxID_ANY, _("%s"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stDescription->Wrap( 300 );
 	bSizerPluginInfo->Add( m_stDescription, 0, wxALL, 5 );
 	
@@ -177,7 +193,7 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_stDepends->Wrap( -1 );
 	fgSizerDependencies->Add( m_stDepends, 0, wxALL, 5 );
 	
-	m_stDepValue = new wxStaticText( this, wxID_ANY, _("Plugin 1\nPlugin 2"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stDepValue = new wxStaticText( this, wxID_ANY, _("%s\n%s"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stDepValue->Wrap( -1 );
 	fgSizerDependencies->Add( m_stDepValue, 0, wxALL, 5 );
 	
@@ -185,29 +201,22 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_stRecommends->Wrap( -1 );
 	fgSizerDependencies->Add( m_stRecommends, 0, wxALL, 5 );
 	
-	m_stRecValue = new wxStaticText( this, wxID_ANY, _("Plugin 3"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stRecValue = new wxStaticText( this, wxID_ANY, _("%s"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stRecValue->Wrap( -1 );
 	fgSizerDependencies->Add( m_stRecValue, 0, wxALL, 5 );
 	
 	
 	bSizerPluginInfo->Add( fgSizerDependencies, 1, wxEXPAND, 5 );
 	
-	m_cbInstall = new wxCheckBox( this, wxID_ANY, _("Install (Download size: 1MB)"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cbInstall = new wxCheckBox( this, wxID_ANY, _("Install (Download size: %i kB)"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_cbInstall->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
 	
 	bSizerPluginInfo->Add( m_cbInstall, 0, wxALL, 5 );
 	
-	m_cbComponent1 = new wxCheckBox( this, wxID_ANY, _("Needed data (200KB)"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_cbComponent1->SetValue(true); 
-	m_cbComponent1->Enable( false );
+	bSizerComponents = new wxBoxSizer( wxVERTICAL );
 	
-	bSizerPluginInfo->Add( m_cbComponent1, 0, wxLEFT, 15 );
 	
-	m_cbComponent2 = new wxCheckBox( this, wxID_ANY, _("Recommended data 1 (1MB)"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizerPluginInfo->Add( m_cbComponent2, 0, wxLEFT, 15 );
-	
-	m_cbComponent3 = new wxCheckBox( this, wxID_ANY, _("Recommended data 2 (10MB)"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizerPluginInfo->Add( m_cbComponent3, 0, wxLEFT, 15 );
+	bSizerPluginInfo->Add( bSizerComponents, 0, wxEXPAND, 5 );
 	
 	
 	bSizerPlugin->Add( bSizerPluginInfo, 1, wxEXPAND, 5 );
@@ -218,11 +227,11 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	m_bmpScreenshot = new wxStaticBitmap( this, wxID_ANY, wxBitmap( wxT("../../../../../Pictures/Climatology.png"), wxBITMAP_TYPE_ANY ), wxDefaultPosition, wxSize( 240,180 ), 0 );
 	bSizerScreenshot->Add( m_bmpScreenshot, 0, wxALL, 5 );
 	
-	m_stAuthor = new wxStaticText( this, wxID_ANY, _("by John Doe"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stAuthor = new wxStaticText( this, wxID_ANY, _("by %s"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_stAuthor->Wrap( -1 );
 	bSizerScreenshot->Add( m_stAuthor, 0, wxALL, 5 );
 	
-	m_hlnkWebsite = new wxHyperlinkCtrl( this, wxID_ANY, _("Website"), wxT("http://www.wxformbuilder.org"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+	m_hlnkWebsite = new wxHyperlinkCtrl( this, wxID_ANY, _("%s"), wxT("%s"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	bSizerScreenshot->Add( m_hlnkWebsite, 0, wxALL, 5 );
 	
 	
@@ -234,8 +243,6 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	// Connect Events
 	m_cbInstall->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckInstall ), NULL, this );
-	m_cbComponent2->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckData ), NULL, this );
-	m_cbComponent3->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckData ), NULL, this );
 	m_hlnkWebsite->Connect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( PluginPanel::OnOpenWebsite ), NULL, this );
 }
 
@@ -243,8 +250,122 @@ PluginPanel::~PluginPanel()
 {
 	// Disconnect Events
 	m_cbInstall->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckInstall ), NULL, this );
-	m_cbComponent2->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckData ), NULL, this );
-	m_cbComponent3->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckData ), NULL, this );
 	m_hlnkWebsite->Disconnect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( PluginPanel::OnOpenWebsite ), NULL, this );
+	
+}
+
+PimanSettingsDlg::PimanSettingsDlg( wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : wxDialog( parent, id, title, pos, size, style )
+{
+	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+	
+	wxBoxSizer* bSizerSettings;
+	bSizerSettings = new wxBoxSizer( wxVERTICAL );
+	
+	wxBoxSizer* bSizerListUrl;
+	bSizerListUrl = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_stListUrl = new wxStaticText( this, wxID_ANY, _("Plugin manifest list"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stListUrl->Wrap( -1 );
+	bSizerListUrl->Add( m_stListUrl, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_tPluginListUrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	bSizerListUrl->Add( m_tPluginListUrl, 1, wxALL|wxEXPAND, 5 );
+	
+	
+	bSizerSettings->Add( bSizerListUrl, 0, wxEXPAND, 5 );
+	
+	wxBoxSizer* bSizerUpdateCheck;
+	bSizerUpdateCheck = new wxBoxSizer( wxHORIZONTAL );
+	
+	m_cbStartupCheck = new wxCheckBox( this, wxID_ANY, _("Check for updates at startup"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_cbStartupCheck->SetValue(true); 
+	bSizerUpdateCheck->Add( m_cbStartupCheck, 0, wxALL, 5 );
+	
+	m_stEvery = new wxStaticText( this, wxID_ANY, _("every"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stEvery->Wrap( -1 );
+	m_stEvery->Enable( false );
+	
+	bSizerUpdateCheck->Add( m_stEvery, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	m_spStartupCheckPeriod = new wxSpinCtrl( this, wxID_ANY, wxT("30"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 7, 365, 0 );
+	m_spStartupCheckPeriod->Enable( false );
+	
+	bSizerUpdateCheck->Add( m_spStartupCheckPeriod, 0, wxALL, 5 );
+	
+	m_stDays = new wxStaticText( this, wxID_ANY, _("days"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stDays->Wrap( -1 );
+	m_stDays->Enable( false );
+	
+	bSizerUpdateCheck->Add( m_stDays, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	
+	
+	bSizerSettings->Add( bSizerUpdateCheck, 0, wxEXPAND, 5 );
+	
+	m_cbDownloadPictures = new wxCheckBox( this, wxID_ANY, _("Download icons and screenshots"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizerSettings->Add( m_cbDownloadPictures, 0, wxALL, 5 );
+	
+	m_cbAutoUpdate = new wxCheckBox( this, wxID_ANY, _("Install updates automatically"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizerSettings->Add( m_cbAutoUpdate, 0, wxALL, 5 );
+	
+	wxBoxSizer* bSizerBlacklist;
+	bSizerBlacklist = new wxBoxSizer( wxHORIZONTAL );
+	
+	
+	bSizerBlacklist->Add( 25, 0, 0, 0, 5 );
+	
+	wxBoxSizer* bSizerInnerBlacklist;
+	bSizerInnerBlacklist = new wxBoxSizer( wxVERTICAL );
+	
+	m_stAutoUpdateBlacklist = new wxStaticText( this, wxID_ANY, _("Ignore automatic updates for"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_stAutoUpdateBlacklist->Wrap( -1 );
+	m_stAutoUpdateBlacklist->Enable( false );
+	
+	bSizerInnerBlacklist->Add( m_stAutoUpdateBlacklist, 0, wxALL, 5 );
+	
+	wxString m_clAutoUpdateBlacklistChoices[] = { _("aaa") };
+	int m_clAutoUpdateBlacklistNChoices = sizeof( m_clAutoUpdateBlacklistChoices ) / sizeof( wxString );
+	m_clAutoUpdateBlacklist = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_clAutoUpdateBlacklistNChoices, m_clAutoUpdateBlacklistChoices, 0 );
+	m_clAutoUpdateBlacklist->Enable( false );
+	
+	bSizerInnerBlacklist->Add( m_clAutoUpdateBlacklist, 0, wxALL|wxEXPAND, 5 );
+	
+	
+	bSizerBlacklist->Add( bSizerInnerBlacklist, 1, wxEXPAND, 5 );
+	
+	
+	bSizerSettings->Add( bSizerBlacklist, 1, wxEXPAND, 5 );
+	
+	
+	bSizerSettings->Add( 0, 0, 1, wxEXPAND, 5 );
+	
+	m_sdbSButtons = new wxStdDialogButtonSizer();
+	m_sdbSButtonsOK = new wxButton( this, wxID_OK );
+	m_sdbSButtons->AddButton( m_sdbSButtonsOK );
+	m_sdbSButtonsCancel = new wxButton( this, wxID_CANCEL );
+	m_sdbSButtons->AddButton( m_sdbSButtonsCancel );
+	m_sdbSButtons->Realize();
+	
+	bSizerSettings->Add( m_sdbSButtons, 0, wxALL|wxEXPAND, 5 );
+	
+	
+	this->SetSizer( bSizerSettings );
+	this->Layout();
+	
+	this->Centre( wxBOTH );
+	
+	// Connect Events
+	m_cbStartupCheck->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnCheckAtStartupCheck ), NULL, this );
+	m_cbDownloadPictures->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnDownloadPicturesCheck ), NULL, this );
+	m_cbAutoUpdate->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnAutoInstallCheck ), NULL, this );
+	m_clAutoUpdateBlacklist->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( PimanSettingsDlg::OnBlacklistCheck ), NULL, this );
+}
+
+PimanSettingsDlg::~PimanSettingsDlg()
+{
+	// Disconnect Events
+	m_cbStartupCheck->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnCheckAtStartupCheck ), NULL, this );
+	m_cbDownloadPictures->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnDownloadPicturesCheck ), NULL, this );
+	m_cbAutoUpdate->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnAutoInstallCheck ), NULL, this );
+	m_clAutoUpdateBlacklist->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( PimanSettingsDlg::OnBlacklistCheck ), NULL, this );
 	
 }

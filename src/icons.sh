@@ -31,7 +31,7 @@ path=$(dirname $0)
 # Require convert from package ImageMagick
 # Require inkscape
 
-for pic in $path/piman.svg $path/piman_pi.svg
+for pic in $path/piman.svg $path/piman_pi.svg $path/piman_updates.svg
 do
   echo "converting $pic"
   inkscape --without-gui --export-png=$path/$(basename $pic .svg ).png --export-dpi=72 --export-background-opacity=0 --export-width=32 --export-height=32 $pic >/dev/null

@@ -59,6 +59,8 @@ class Dependency
 public:
     Dependency(pugi::xml_node* node);
     static DependencyType AttrValToDependencyType(std::string val);
+    const DependencyType GetDependencyType() { return type; }
+    const wxString GetName() { return wxString::FromUTF8(dependency_name.c_str()); }
 
 private:
     std::string dependency_name;
@@ -83,7 +85,7 @@ public:
     const wxString GetUrl() { return wxString::FromUTF8(url.c_str()); }
     const int GetSize() { return size; }
     const wxString GetChecksum() { return wxString::FromUTF8(checksum.c_str()); }
-    const wxString GetDescription() { return wxString::FromUTF8(description.c_str()); }
+    const wxString GetDescription();
     const wxString GetPostInstallMsg() { return wxString::FromUTF8(post_install_message.c_str()); }
     const DependencyType GetDependencyType() { return type; }
 

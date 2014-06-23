@@ -2,7 +2,7 @@ src/icons.cpp
 src/icons.h
 src/piman_pi.cpp
 src/piman_pi.h
-src/guicpp
+src/gui.cpp
 src/gui.h
 src/gui_impl.cpp
 src/gui_impl.h

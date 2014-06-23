@@ -29,6 +29,9 @@
 #include <wx/statbmp.h>
 #include <wx/checkbox.h>
 #include <wx/hyperlink.h>
+#include <wx/textctrl.h>
+#include <wx/spinctrl.h>
+#include <wx/checklst.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -43,17 +46,18 @@ class PluginMgrDlg : public wxDialog
 	protected:
 		wxStaticText* m_stLastUpdate;
 		wxStaticText* m_stLastUpdateVal;
+		wxStaticText* m_stUpdatesAvailable;
+		wxStaticText* m_stUpdatesAvailableVal;
 		wxButton* m_btnRefresh;
 		wxStaticText* m_stPluginList;
 		wxScrolledWindow* m_swPlugins;
+		wxBoxSizer* bSizerPlugins;
 		wxPanel* m_panelPlugin;
 		wxStaticLine* m_staticline1;
-		wxPanel* m_panelPlugin1;
-		wxStaticLine* m_staticline2;
-		wxPanel* m_panelPlugin2;
-		wxStaticLine* m_staticline21;
-		wxPanel* m_panelPlugin21;
-		wxStaticText* m_stTotals;
+		wxStaticText* m_stToInstall;
+		wxStaticText* m_stToInstallVal;
+		wxStaticText* m_stToDownload;
+		wxStaticText* m_stToDownloadVal;
 		wxButton* m_btnInstall;
 		wxButton* m_btnClose;
 		
@@ -65,7 +69,7 @@ class PluginMgrDlg : public wxDialog
 	
 	public:
 		
-		PluginMgrDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plugin Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 641,490 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		PluginMgrDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plugin Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 620,450 ), long style = wxDEFAULT_DIALOG_STYLE ); 
 		~PluginMgrDlg();
 	
 };
@@ -90,16 +94,13 @@ class PluginPanel : public wxPanel
 		wxStaticText* m_stRecommends;
 		wxStaticText* m_stRecValue;
 		wxCheckBox* m_cbInstall;
-		wxCheckBox* m_cbComponent1;
-		wxCheckBox* m_cbComponent2;
-		wxCheckBox* m_cbComponent3;
+		wxBoxSizer* bSizerComponents;
 		wxStaticBitmap* m_bmpScreenshot;
 		wxStaticText* m_stAuthor;
 		wxHyperlinkCtrl* m_hlnkWebsite;
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCheckInstall( wxCommandEvent& event ) { event.Skip(); }
-		virtual void OnCheckData( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOpenWebsite( wxHyperlinkEvent& event ) { event.Skip(); }
 		
 	
@@ -107,6 +108,42 @@ class PluginPanel : public wxPanel
 		
 		PluginPanel( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 558,394 ), long style = wxTAB_TRAVERSAL ); 
 		~PluginPanel();
+	
+};
+
+///////////////////////////////////////////////////////////////////////////////
+/// Class PimanSettingsDlg
+///////////////////////////////////////////////////////////////////////////////
+class PimanSettingsDlg : public wxDialog 
+{
+	private:
+	
+	protected:
+		wxStaticText* m_stListUrl;
+		wxTextCtrl* m_tPluginListUrl;
+		wxCheckBox* m_cbStartupCheck;
+		wxStaticText* m_stEvery;
+		wxSpinCtrl* m_spStartupCheckPeriod;
+		wxStaticText* m_stDays;
+		wxCheckBox* m_cbDownloadPictures;
+		wxCheckBox* m_cbAutoUpdate;
+		wxStaticText* m_stAutoUpdateBlacklist;
+		wxCheckListBox* m_clAutoUpdateBlacklist;
+		wxStdDialogButtonSizer* m_sdbSButtons;
+		wxButton* m_sdbSButtonsOK;
+		wxButton* m_sdbSButtonsCancel;
+		
+		// Virtual event handlers, overide them in your derived class
+		virtual void OnCheckAtStartupCheck( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnDownloadPicturesCheck( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnAutoInstallCheck( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnBlacklistCheck( wxCommandEvent& event ) { event.Skip(); }
+		
+	
+	public:
+		
+		PimanSettingsDlg( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plug-in Manager Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 620,450 ), long style = wxDEFAULT_DIALOG_STYLE ); 
+		~PimanSettingsDlg();
 	
 };
 

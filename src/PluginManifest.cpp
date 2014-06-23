@@ -36,6 +36,14 @@ CommonData::CommonData(pugi::xml_node* node)
     type = Dependency::AttrValToDependencyType(node->attribute("Type").as_string());
 }
 
+const wxString CommonData::GetDescription()
+{
+    if ( description.length() > 0 )
+        return wxString::FromUTF8(description.c_str());
+    else
+        return wxString::FromUTF8(url.c_str()).AfterLast('/');
+}
+
 Platform PlatformData::AttrValToPlatform(std::string val)
 {
     if (val == "Linux32")

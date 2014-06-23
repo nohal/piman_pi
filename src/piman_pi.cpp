@@ -106,10 +106,9 @@ int piman_pi::Init ( void )
     m_leftclick_tool_id = InsertPlugInTool ( _T ( "Plug-in Manager" ), _img_piman, _img_piman, wxITEM_CHECK,
                           _ ( "Plug-in Manager" ), _ ( "Plug-in Manager" ), NULL,
                           PIMAN_TOOL_POSITION, 0, this );
-
-    ApplyConfig();
     
-    
+    m_pPimanDlg = new PluginMgrDlgImpl(this, m_parent_window);
+    m_pSettingsDlg = new PimanSettingsDlgImpl(this, m_parent_window);
     
     m_data_dir = m_plugins_dir = *GetpPrivateApplicationDataLocation();
     m_data_dir.Append(wxFileName::GetPathSeparator()).Append(_T("piman_pi"));
@@ -122,17 +121,38 @@ int piman_pi::Init ( void )
         wxFileName::Mkdir(m_plugins_dir);
     
     m_cached_manifest_list = wxFileName(m_data_dir, _T("manifestlist.xml")).GetFullPath();
-    
-    if (wxFileExists(m_cached_manifest_list))
-    {
-        m_manifest_list.Load(m_cached_manifest_list.mb_str());
-        LoadManifestsFromDisk();
+        
+    if ( m_bCheckAtStartup && m_iLastUpdate <= wxDateTime::GetTimeNow() - m_iCheckAtStartupInterval * 86400 )
+        UpdateManifestsFromNet();
+    else
+    {    
+        if (wxFileExists(m_cached_manifest_list))
+        {
+            m_manifest_list.Load(m_cached_manifest_list.mb_str());
+            LoadManifestsFromDisk();
+        }
     }
+    
+    ApplyConfig();
     
     return ( WANTS_TOOLBAR_CALLBACK    |
              INSTALLS_TOOLBAR_TOOL     |
+             WANTS_PREFERENCES         |
              WANTS_CONFIG
            );
+}
+
+void piman_pi::UpdateManifestsFromNet()
+{
+    DownloadManifestList();
+    DownloadManifests();
+    if (wxFileExists(m_cached_manifest_list))
+    {
+        m_iLastUpdate = wxDateTime::GetTimeNow();
+        m_manifest_list.Load(m_cached_manifest_list.mb_str());
+        LoadManifestsFromDisk();
+        ApplyConfig();
+    }
 }
 
 void piman_pi::LoadManifestsFromDisk()
@@ -165,17 +185,42 @@ void piman_pi::DownloadManifests()
     {
         wxString manifest_name = wxFileName(m_data_dir, wxString::Format(_T("%s.manifest"), it->GetName().c_str())).GetFullPath();
         DownloadFile(it->GetUrl(), manifest_name);
+        if (wxFileExists(manifest_name))
+        {
+            PluginManifest man(manifest_name.mbc_str());
+            DownloadManifestBitmaps(&man);
+        }
     }
 }
 
 void piman_pi::DownloadManifestBitmaps(PluginManifest* manifest)
 {
+    if (!m_bDownloadPictures)
+        return;
     //TODO: Maybe not if they already exist? But then how will we know that the author wants to update them? And do we care?
     wxString picture;
     picture = wxFileName(m_data_dir, wxString::Format(_T("%s.icon.png"), manifest->GetName().c_str())).GetFullPath();
     DownloadFile(manifest->GetIconUrl(), picture);
     picture = wxFileName(m_data_dir, wxString::Format(_T("%s.ss.png"), manifest->GetName().c_str())).GetFullPath();
     DownloadFile(manifest->GetScreenshotUrl(), picture);
+}
+
+wxImage* piman_pi::GetPluginIcon(PluginManifest* manifest)
+{
+    wxString picture;
+    picture = wxFileName(m_data_dir, wxString::Format(_T("%s.icon.png"), manifest->GetName().c_str())).GetFullPath();
+    if ( wxFileExists(picture) );
+        return new wxImage(picture);
+    return NULL;
+}
+
+wxImage* piman_pi::GetPluginScreenshot(PluginManifest* manifest)
+{
+    wxString picture;
+    picture = wxFileName(m_data_dir, wxString::Format(_T("%s.ss.png"), manifest->GetName().c_str())).GetFullPath();
+    if ( wxFileExists(picture) );
+        return new wxImage(picture);
+    return NULL;
 }
 
 void piman_pi::DownloadManifestList()
@@ -190,12 +235,24 @@ void piman_pi::DownloadManifestList()
 
 void piman_pi::ApplyConfig(void)
 {
-    //TODO: Update the dialog with m_iLastUpdate
+    m_pPimanDlg->ClearDialog();
+    for(std::vector<PluginManifest>::iterator it = m_plugin_manifests.begin(); it != m_plugin_manifests.end(); ++it)
+    {
+        if ((&*it)->IsAvailableForPlatform(PLATFORM_ID))
+            m_pPimanDlg->AddPlugin(&*it);
+    }
+    m_pPimanDlg->SetLastUpdate(m_iLastUpdate);
+    m_pPimanDlg->SetNrToInstall(0);
+    m_pPimanDlg->SetSizeToDownload(0);
 }
 
 bool piman_pi::DeInit ( void )
 {
     SaveConfig();
+    m_pPimanDlg->Close(true);
+    m_pPimanDlg->Destroy();
+    m_pSettingsDlg->Close(true);
+    m_pSettingsDlg->Destroy();
     return true;
 }
 
@@ -238,7 +295,7 @@ wxString piman_pi::GetShortDescription()
 wxString piman_pi::GetLongDescription()
 {
     return _ ( "Plug-in Manager PlugIn for OpenCPN\n\
-Provides manageent of pluug-ins." );
+Provides management of plug-ins." );
 }
 
 int piman_pi::GetToolbarToolCount ( void )
@@ -423,6 +480,9 @@ bool piman_pi::DecompressFile(const wxString tarxz_name, wxString target_path)
 
 void piman_pi::OnToolbarToolCallback ( int id )
 {
+    ApplyConfig();
+    m_pPimanDlg->ShowModal();
+    /*
     DownloadManifestList();
     m_manifest_list.Load(m_cached_manifest_list.mb_str());
     DownloadManifests();
@@ -432,6 +492,7 @@ void piman_pi::OnToolbarToolCallback ( int id )
         DownloadManifestBitmaps(&*it);
         DownloadManifestDataFiles(&*it, std::vector<std::string>());
     }
+    */
 }
 
 bool piman_pi::LoadConfig ( void )
@@ -446,6 +507,11 @@ bool piman_pi::LoadConfig ( void )
     pConf->Read( _T( "WindowHeight" ), &m_iWindowHeight, DEFAULT_HEIGHT );
     pConf->Read( _T( "LastUpdate" ), &m_iLastUpdate, 0 );
     pConf->Read( _T( "ManifestListUrl" ), &m_manifestListUrl, DEFAULT_MANIFESTLISTURL );
+    pConf->Read( _T( "CheckAtStartup" ), &m_bCheckAtStartup, false );
+    pConf->Read( _T( "CheckAtStartupInterval" ), &m_iCheckAtStartupInterval, 30 );
+    pConf->Read( _T( "DownloadPictures" ), &m_bDownloadPictures, true );
+    pConf->Read( _T( "AutoUpdate" ), &m_bAutoUpdate, true );
+    pConf->Read( _T( "AutotUpdateBlacklist" ), &m_autoUpdateBlacklist, wxEmptyString );
 
     return true;
 }
@@ -462,10 +528,41 @@ bool piman_pi::SaveConfig ( void )
     pConf->Write( _T( "WindowHeight" ), m_iWindowHeight );
     pConf->Write( _T( "LastUpdate" ), m_iLastUpdate );
     pConf->Write( _T( "ManifestListUrl" ), m_manifestListUrl );
+    pConf->Write( _T( "CheckAtStartup" ), m_bCheckAtStartup );
+    pConf->Write( _T( "CheckAtStartupInterval" ), m_iCheckAtStartupInterval );
+    pConf->Write( _T( "DownloadPictures" ), m_bDownloadPictures );
+    pConf->Write( _T( "AutoUpdate" ), m_bAutoUpdate );
+    pConf->Write( _T( "AutotUpdateBlacklist" ), m_autoUpdateBlacklist );
 
     return true;
 }
 
 void piman_pi::SetColorScheme ( PI_ColorScheme cs )
 {
+}
+
+void piman_pi::ShowPreferencesDialog( wxWindow* parent )
+{
+    m_pSettingsDlg->m_cbAutoUpdate->SetValue(m_bAutoUpdate);
+    m_pSettingsDlg->m_cbDownloadPictures->SetValue(m_bDownloadPictures);
+    m_pSettingsDlg->m_cbStartupCheck->SetValue(m_bCheckAtStartup);
+    m_pSettingsDlg->m_stDays->Enable(m_bAutoUpdate);
+    m_pSettingsDlg->m_stEvery->Enable(m_bAutoUpdate);
+    m_pSettingsDlg->m_spStartupCheckPeriod->Enable(m_bAutoUpdate);
+    m_pSettingsDlg->m_spStartupCheckPeriod->SetValue(m_iCheckAtStartupInterval);    
+    m_pSettingsDlg->m_tPluginListUrl->SetValue(m_manifestListUrl);
+    //TODO: Blacklist
+    
+    m_pSettingsDlg->Fit();
+    if(m_pSettingsDlg->ShowModal() == wxID_OK)
+    {
+        m_bAutoUpdate = m_pSettingsDlg->m_cbAutoUpdate->GetValue();
+        m_bDownloadPictures = m_pSettingsDlg->m_cbDownloadPictures->GetValue();
+        m_bCheckAtStartup = m_pSettingsDlg->m_cbStartupCheck->GetValue();
+        m_iCheckAtStartupInterval = m_pSettingsDlg->m_spStartupCheckPeriod->GetValue();
+        m_manifestListUrl = m_pSettingsDlg->m_tPluginListUrl->GetValue();
+        //TODO: Blacklist
+
+        SaveConfig();
+    }
 }
