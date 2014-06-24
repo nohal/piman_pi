@@ -466,6 +466,11 @@ bool piman_pi::DecompressFile(const wxString tarxz_name, wxString target_path)
         {
             wxString fn = entry->GetName();
             wxString name = target_path.Append(wxFileName::GetPathSeparator()).Append(fn);
+            
+            wxString outputdir = wxFileName(name).GetPath();
+            if (!wxDirExists(outputdir))
+                wxFileName(outputdir).Mkdir(0777, wxPATH_MKDIR_FULL);
+            
             wxFileOutputStream out(name);
             res = out.IsOk();
             if (res)
