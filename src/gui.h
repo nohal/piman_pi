@@ -19,8 +19,6 @@
 #include <wx/settings.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
-#include <wx/panel.h>
-#include <wx/statline.h>
 #include <wx/scrolwin.h>
 #include <wx/dialog.h>
 #include <wx/bitmap.h>
@@ -29,6 +27,7 @@
 #include <wx/statbmp.h>
 #include <wx/checkbox.h>
 #include <wx/hyperlink.h>
+#include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/spinctrl.h>
 #include <wx/checklst.h>
@@ -52,8 +51,6 @@ class PluginMgrDlg : public wxDialog
 		wxStaticText* m_stPluginList;
 		wxScrolledWindow* m_swPlugins;
 		wxBoxSizer* bSizerPlugins;
-		wxPanel* m_panelPlugin;
-		wxStaticLine* m_staticline1;
 		wxStaticText* m_stToInstall;
 		wxStaticText* m_stToInstallVal;
 		wxStaticText* m_stToDownload;
@@ -94,6 +91,7 @@ class PluginPanel : public wxPanel
 		wxStaticText* m_stRecommends;
 		wxStaticText* m_stRecValue;
 		wxCheckBox* m_cbInstall;
+		wxButton* m_btnUninstall;
 		wxBoxSizer* bSizerComponents;
 		wxStaticBitmap* m_bmpScreenshot;
 		wxStaticText* m_stAuthor;
@@ -101,6 +99,7 @@ class PluginPanel : public wxPanel
 		
 		// Virtual event handlers, overide them in your derived class
 		virtual void OnCheckInstall( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnUninstall( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnOpenWebsite( wxHyperlinkEvent& event ) { event.Skip(); }
 		
 	
@@ -129,6 +128,7 @@ class PimanSettingsDlg : public wxDialog
 		wxCheckBox* m_cbAutoUpdate;
 		wxStaticText* m_stAutoUpdateBlacklist;
 		wxCheckListBox* m_clAutoUpdateBlacklist;
+		wxButton* m_btnPurgeData;
 		wxStdDialogButtonSizer* m_sdbSButtons;
 		wxButton* m_sdbSButtonsOK;
 		wxButton* m_sdbSButtonsCancel;
@@ -138,6 +138,7 @@ class PimanSettingsDlg : public wxDialog
 		virtual void OnDownloadPicturesCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnAutoInstallCheck( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnBlacklistCheck( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnPurgeData( wxCommandEvent& event ) { event.Skip(); }
 		
 	
 	public:

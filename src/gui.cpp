@@ -58,12 +58,6 @@ PluginMgrDlg::PluginMgrDlg( wxWindow* parent, wxWindowID id, const wxString& tit
 	m_swPlugins->SetScrollRate( 5, 5 );
 	bSizerPlugins = new wxBoxSizer( wxVERTICAL );
 	
-	m_panelPlugin = new wxPanel( m_swPlugins, wxID_ANY, wxDefaultPosition, wxSize( -1,100 ), wxTAB_TRAVERSAL );
-	bSizerPlugins->Add( m_panelPlugin, 0, wxEXPAND | wxALL, 5 );
-	
-	m_staticline1 = new wxStaticLine( m_swPlugins, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	bSizerPlugins->Add( m_staticline1, 0, wxEXPAND | wxALL, 5 );
-	
 	
 	m_swPlugins->SetSizer( bSizerPlugins );
 	m_swPlugins->Layout();
@@ -213,6 +207,9 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	bSizerPluginInfo->Add( m_cbInstall, 0, wxALL, 5 );
 	
+	m_btnUninstall = new wxButton( this, wxID_ANY, _("Uninstall"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizerPluginInfo->Add( m_btnUninstall, 0, wxALL, 5 );
+	
 	bSizerComponents = new wxBoxSizer( wxVERTICAL );
 	
 	
@@ -243,6 +240,7 @@ PluginPanel::PluginPanel( wxWindow* parent, wxWindowID id, const wxPoint& pos, c
 	
 	// Connect Events
 	m_cbInstall->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckInstall ), NULL, this );
+	m_btnUninstall->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PluginPanel::OnUninstall ), NULL, this );
 	m_hlnkWebsite->Connect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( PluginPanel::OnOpenWebsite ), NULL, this );
 }
 
@@ -250,6 +248,7 @@ PluginPanel::~PluginPanel()
 {
 	// Disconnect Events
 	m_cbInstall->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PluginPanel::OnCheckInstall ), NULL, this );
+	m_btnUninstall->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PluginPanel::OnUninstall ), NULL, this );
 	m_hlnkWebsite->Disconnect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( PluginPanel::OnOpenWebsite ), NULL, this );
 	
 }
@@ -335,6 +334,9 @@ PimanSettingsDlg::PimanSettingsDlg( wxWindow* parent, wxWindowID id, const wxStr
 	
 	bSizerSettings->Add( bSizerBlacklist, 1, wxEXPAND, 5 );
 	
+	m_btnPurgeData = new wxButton( this, wxID_ANY, _("Purge cached data"), wxDefaultPosition, wxDefaultSize, 0 );
+	bSizerSettings->Add( m_btnPurgeData, 0, wxALL, 5 );
+	
 	
 	bSizerSettings->Add( 0, 0, 1, wxEXPAND, 5 );
 	
@@ -358,6 +360,7 @@ PimanSettingsDlg::PimanSettingsDlg( wxWindow* parent, wxWindowID id, const wxStr
 	m_cbDownloadPictures->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnDownloadPicturesCheck ), NULL, this );
 	m_cbAutoUpdate->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnAutoInstallCheck ), NULL, this );
 	m_clAutoUpdateBlacklist->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( PimanSettingsDlg::OnBlacklistCheck ), NULL, this );
+	m_btnPurgeData->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnPurgeData ), NULL, this );
 }
 
 PimanSettingsDlg::~PimanSettingsDlg()
@@ -367,5 +370,6 @@ PimanSettingsDlg::~PimanSettingsDlg()
 	m_cbDownloadPictures->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnDownloadPicturesCheck ), NULL, this );
 	m_cbAutoUpdate->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnAutoInstallCheck ), NULL, this );
 	m_clAutoUpdateBlacklist->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( PimanSettingsDlg::OnBlacklistCheck ), NULL, this );
+	m_btnPurgeData->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( PimanSettingsDlg::OnPurgeData ), NULL, this );
 	
 }

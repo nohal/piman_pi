@@ -138,6 +138,7 @@ public:
     std::vector<Dependency> GetDependencies() { return dependencies; }
     
     bool IsAvailableForPlatform(Platform platform);
+    bool IsAvailableForAPILevel(int major, int minor) { return (major == api_level_major) & (minor >= api_level_minor); }
 
 private:
     int version;

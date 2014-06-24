@@ -54,6 +54,8 @@ void PluginMgrDlgImpl::OnRefresh( wxCommandEvent& event )
 
 void PluginMgrDlgImpl::OnInstall( wxCommandEvent& event )
 {
+    
+    p_plugin->DownloadManifestDataFiles(PluginManifest, url)
     event.Skip();
 }
 
@@ -101,7 +103,7 @@ PluginPanelImpl::PluginPanelImpl( piman_pi* pi, PluginManifest* manifest, Plugin
     m_stDescription->SetLabel(p_manifest->GetPluginDescription());
     m_stPluginName->SetLabel(p_manifest->GetPluginVerboseName());
     m_stVerAvailable->SetLabel(p_manifest->GetVersionString());
-    m_stVerInstalled->SetLabel(_("None")); //TODO: Replace with the actual version obtained from the core
+    m_stVerInstalled->SetLabel(p_pi->GetInstalledVersionString(p_manifest->GetName()));
     if ( p_manifest->GetHomepageUrl() != wxEmptyString )
     {
         m_hlnkWebsite->SetURL(p_manifest->GetHomepageUrl());
@@ -190,6 +192,8 @@ PluginPanelImpl::PluginPanelImpl( piman_pi* pi, PluginManifest* manifest, Plugin
     else
         m_bmpScreenshot->Hide();
     
+    m_btnUninstall->Show(p_pi->GetInstalledVersionMajor(p_manifest->GetName()) >= 0);
+    
     Layout();
 }
 
@@ -240,6 +244,7 @@ PluginPanelImpl::~PluginPanelImpl()
 
 PimanSettingsDlgImpl::PimanSettingsDlgImpl( piman_pi* pi, wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style ) : PimanSettingsDlg( parent, id, title, pos, size, style )
 {
+    p_pi = pi;
 }
 
 PimanSettingsDlgImpl::~PimanSettingsDlgImpl()
@@ -252,6 +257,11 @@ void PimanSettingsDlgImpl::OnCheckAtStartupCheck( wxCommandEvent& event )
     m_stDays->Enable(m_cbStartupCheck->GetValue());
     m_spStartupCheckPeriod->Enable(m_cbStartupCheck->GetValue());
     event.Skip();
+}
+
+void PimanSettingsDlgImpl::OnPurgeData()
+{
+    p_pi->PurgeCachedData();
 }
 
 DataCheckbox::DataCheckbox( CommonData* data, wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name ) : wxCheckBox ( parent, id, label, pos, size, style, validator, name )

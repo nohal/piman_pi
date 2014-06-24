@@ -111,6 +111,10 @@ public:
     wxImage* GetPluginIcon(PluginManifest* manifest);
     wxImage* GetPluginScreenshot(PluginManifest* manifest);
     void UpdateManifestsFromNet();
+    void PurgeCachedData();
+    wxString GetInstalledVersionString(wxString pi_name);
+    int GetInstalledVersionMajor(wxString pi_name);
+    int GetInstalledVersionMinor(wxString pi_name);
 
 //    The override PlugIn Methods
     int GetToolbarToolCount ( void );

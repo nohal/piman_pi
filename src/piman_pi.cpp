@@ -38,6 +38,7 @@
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 #include <wx/filefn.h> 
+#include <wx/dir.h>
 #include <wx/tarstrm.h>
 #include "wx/curl/dialog.h"
 
@@ -238,7 +239,7 @@ void piman_pi::ApplyConfig(void)
     m_pPimanDlg->ClearDialog();
     for(std::vector<PluginManifest>::iterator it = m_plugin_manifests.begin(); it != m_plugin_manifests.end(); ++it)
     {
-        if ((&*it)->IsAvailableForPlatform(PLATFORM_ID))
+        if ((&*it)->IsAvailableForPlatform(PLATFORM_ID) && (&*it)->IsAvailableForAPILevel(GetCoreAPIVersionMajor(), GetCoreAPIVersionMinor()))
             m_pPimanDlg->AddPlugin(&*it);
     }
     m_pPimanDlg->SetLastUpdate(m_iLastUpdate);
@@ -565,4 +566,56 @@ void piman_pi::ShowPreferencesDialog( wxWindow* parent )
 
         SaveConfig();
     }
+}
+
+void piman_pi::PurgeCachedData()
+{
+    wxString path(m_data_dir);
+ 	if ( path.Last() != wxFILE_SEP_PATH ) 
+        path += wxFILE_SEP_PATH;
+    wxDir d(path); 
+    // delete all filles 
+    wxString filename;
+    bool cont = d.GetFirst(&filename, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN); 
+    while ( cont ) 
+    { 
+        ::wxRemoveFile(path + filename); 
+        cont = d.GetNext(&filename); 
+    } 
+}
+
+wxString piman_pi::GetInstalledVersionString(wxString pi_name)
+{
+    ArrayOfPI_Plugins* pis =  GetInstalledPlugins();
+    for (size_t i = 0; i < pis->GetCount(); i++)
+    {
+        PI_Plugin *p = pis->Item(i);
+        if (p->Name == pi_name)
+            return wxString::Format(_T("%i.%i"), p->VersionMajor, p->VersionMinor);
+    }
+    return _("None");
+}
+
+int piman_pi::GetInstalledVersionMajor(wxString pi_name)
+{
+    ArrayOfPI_Plugins* pis =  GetInstalledPlugins();
+    for (size_t i = 0; i < pis->GetCount(); i++)
+    {
+        PI_Plugin *p = pis->Item(i);
+        if (p->Name == pi_name)
+            return p->VersionMajor;
+    }
+    return -1;
+}
+
+int piman_pi::GetInstalledVersionMinor(wxString pi_name)
+{
+    ArrayOfPI_Plugins* pis =  GetInstalledPlugins();
+    for (size_t i = 0; i < pis->GetCount(); i++)
+    {
+        PI_Plugin *p = pis->Item(i);
+        if (p->Name == pi_name)
+            return p->VersionMinor;
+    }
+    return -1;
 }

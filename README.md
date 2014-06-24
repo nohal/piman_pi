@@ -39,10 +39,22 @@ Icon made by Freepik from Flaticon.com
 To check the validity of the manifest: xmllint --schema OpenCPNPluginManager.PluginManifest.xsd manifest.xml
 
 The one and only supported package format is tar.xz
-The plug-in files are isolated under ${OPENCPN_DATA}/plugins/${plugin_pi} folder, no paths in the archive are honored.
+The plug-in files are isolated under ${OPENCPN_DATA}/plugins/${plugin_pi} folder.
 
 The one and only supported image format for icons and screenshots is PNG
 
 The manifest is stored when a plug-in is installed/updated. TODO: When a new version arrives, the checksums of the files with same URL are compared and in case of a match the file is not downloaded/installed to save bandwidth (typically good for data files).
 
+TODO: extract the paths correctly from the tars
+
 TODO: If a dependency is not met, it is not possible to install/update the plug-in. The reason for that is that the PostInstall actions could depend on tools installed with other plug-in.
+
+TODO: The loading of disabled plug-ins is deferred until the Toolbox is open, PIMAN needs the same, so a way to enforce it should be implemented in the API.
+
+TODO: Add the path with plug-in locale files to the search path
+
+TODO: When a plug-in is installed, provide a way to remeber and change it's components aven at a moment when there is no update available
+
+TODO: Provide a way for PIMAN to reload the plug-ins to "apply changes" without restart
+
+TODO: Provide a way to uninstall plug-ns

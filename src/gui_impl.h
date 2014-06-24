@@ -28,6 +28,7 @@
 #define __GUI_IMPL_H__
 
 #include "gui.h"
+#include <wx/statline.h>
 #include "PluginManifest.h"
 
 class piman_pi;
@@ -83,9 +84,11 @@ class PimanSettingsDlgImpl : public PimanSettingsDlg
 friend class piman_pi;
 
 private:
+    piman_pi* p_pi;
 
 protected:
     virtual void OnCheckAtStartupCheck( wxCommandEvent& event );
+    virtual void OnPurgeData();
     
 public:
     PimanSettingsDlgImpl( piman_pi* pi, wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Plug-in Manager"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 620,450 ), long style = wxDEFAULT_DIALOG_STYLE ); 
