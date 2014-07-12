@@ -125,6 +125,8 @@ public:
     void SetColorScheme ( PI_ColorScheme cs );
     
     wxString GetLastUpdateDate() { return wxDateTime(m_iLastUpdate).FormatDate(); }
+    void UninstallPlugin( const wxString name );
+    void InstallPlugins( std::vector<wxString> names, std::vector<std::string> selected_urls );
     
 private:
     bool LoadConfig ( void );

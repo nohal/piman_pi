@@ -486,6 +486,7 @@ void wxCurlTransferDialog::OnEndPerform(wxCurlEndPerformEvent &ev)
 
     // transfer has completed...
     wxCurlDialogReturnFlag retCode = ev.IsSuccessful() ? wxCDRF_SUCCESS : wxCDRF_FAILED;
+#if 0 // below is bugged because m_pThread->GetCurlSession() is NULL at this point...
     if (retCode == wxCDRF_FAILED)
     {
         // show the user a message...
@@ -493,6 +494,7 @@ void wxCurlTransferDialog::OnEndPerform(wxCurlEndPerformEvent &ev)
                    m_pThread->GetCurlSession()->GetErrorString().c_str(),
                    m_pThread->GetCurlSession()->GetDetailedErrorString().c_str());
     }
+#endif
 
     // do we need to close this window?
     if (HasFlag(wxCTDS_AUTO_CLOSE))

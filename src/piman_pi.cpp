@@ -48,6 +48,45 @@
 #define NAN (INFINITY-INFINITY)
 #endif
 
+bool wxRecursRmDir(wxString rmDir)
+{
+    if (rmDir.length() <= 3)
+        return false;
+    if(!wxDir::Exists(rmDir))
+        return false;
+    if (rmDir[rmDir.length()-1] != wxFILE_SEP_PATH)
+        rmDir += wxFILE_SEP_PATH;
+    wxDir* dir = new wxDir(rmDir);
+    if (dir == NULL)
+        return false;
+    wxString filename;
+    bool cont = dir->GetFirst(&filename);
+    if (cont)
+    {
+        do
+        {
+            if (wxDirExists(rmDir + filename))
+            {
+                wxRecursRmDir(rmDir + filename);
+            } else {
+                if(!wxRemoveFile(rmDir + filename))
+                {
+                    wxLogError(_("Could not remove file \"") + rmDir + filename + _T("\""));
+                }
+            }
+        }
+        while (dir->GetNext(&filename));
+    }
+    delete dir;
+    if (!wxFileName::Rmdir(rmDir))
+    {
+        wxLogError(_("Could not remove directory \"") + rmDir + _T("\""));
+        return false;
+    } else {
+        return true;
+    }
+}
+
 
 // the class factories, used to create and destroy instances of the PlugIn
 
@@ -239,7 +278,7 @@ void piman_pi::ApplyConfig(void)
     m_pPimanDlg->ClearDialog();
     for(std::vector<PluginManifest>::iterator it = m_plugin_manifests.begin(); it != m_plugin_manifests.end(); ++it)
     {
-        if ((&*it)->IsAvailableForPlatform(PLATFORM_ID) && (&*it)->IsAvailableForAPILevel(GetCoreAPIVersionMajor(), GetCoreAPIVersionMinor()))
+        if (it->IsAvailableForPlatform(PLATFORM_ID) && it->IsAvailableForAPILevel(GetCoreAPIVersionMajor(), GetCoreAPIVersionMinor()))
             m_pPimanDlg->AddPlugin(&*it);
     }
     m_pPimanDlg->SetLastUpdate(m_iLastUpdate);
@@ -364,6 +403,25 @@ bool piman_pi::DownloadWithDialog(const wxString url, const wxString local_file)
     else
     {
         return false;
+    }
+}
+
+void piman_pi::UninstallPlugin( const wxString name )
+{
+    wxString plugin_dir = m_plugins_dir;
+    plugin_dir.Append(wxFileName::GetPathSeparator()).Append(name);
+    if (wxDirExists(plugin_dir))
+        wxRecursRmDir(plugin_dir);
+}
+
+void piman_pi::InstallPlugins( std::vector<wxString> names, std::vector<std::string> selected_urls )
+{
+    for(std::vector<PluginManifest>::iterator it = m_plugin_manifests.begin(); it != m_plugin_manifests.end(); ++it)
+    {
+        if( std::find(names.begin(), names.end(), it->GetName()) != names.end())
+        {
+            DownloadManifestDataFiles(&*it, selected_urls);
+        }
     }
 }
 
@@ -517,7 +575,7 @@ bool piman_pi::LoadConfig ( void )
     pConf->Read( _T( "CheckAtStartupInterval" ), &m_iCheckAtStartupInterval, 30 );
     pConf->Read( _T( "DownloadPictures" ), &m_bDownloadPictures, true );
     pConf->Read( _T( "AutoUpdate" ), &m_bAutoUpdate, true );
-    pConf->Read( _T( "AutotUpdateBlacklist" ), &m_autoUpdateBlacklist, wxEmptyString );
+    pConf->Read( _T( "AutoUpdateBlacklist" ), &m_autoUpdateBlacklist, wxEmptyString );
 
     return true;
 }
@@ -538,7 +596,7 @@ bool piman_pi::SaveConfig ( void )
     pConf->Write( _T( "CheckAtStartupInterval" ), m_iCheckAtStartupInterval );
     pConf->Write( _T( "DownloadPictures" ), m_bDownloadPictures );
     pConf->Write( _T( "AutoUpdate" ), m_bAutoUpdate );
-    pConf->Write( _T( "AutotUpdateBlacklist" ), m_autoUpdateBlacklist );
+    pConf->Write( _T( "AutoUpdateBlacklist" ), m_autoUpdateBlacklist );
 
     return true;
 }

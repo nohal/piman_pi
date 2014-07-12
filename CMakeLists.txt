@@ -82,19 +82,19 @@ SET(SRC_PIMAN
             src/piman_pi.cpp
             src/icons.h
             src/icons.cpp
-            wxcurl/src/base.cpp
-            wxcurl/src/dav.cpp
-            wxcurl/src/davtool.cpp
-            wxcurl/src/dialog.cpp
-            wxcurl/src/ftp.cpp
-            wxcurl/src/ftpparse.cpp
-            wxcurl/src/ftpparse.h
-            wxcurl/src/ftptool.cpp
-            wxcurl/src/http.cpp
-            wxcurl/src/panel.cpp
-            wxcurl/src/telnet.cpp
-            wxcurl/src/thread.cpp
-            wxcurl/src/utils.cpp
+            src/wxcurl/base.cpp
+            src/wxcurl/dav.cpp
+            src/wxcurl/davtool.cpp
+            src/wxcurl/dialog.cpp
+            src/wxcurl/ftp.cpp
+            src/wxcurl/ftpparse.cpp
+            src/wxcurl/ftpparse.h
+            src/wxcurl/ftptool.cpp
+            src/wxcurl/http.cpp
+            src/wxcurl/panel.cpp
+            src/wxcurl/telnet.cpp
+            src/wxcurl/thread.cpp
+            src/wxcurl/utils.cpp
             src/xz.h
             src/xz.cpp
             src/md5.h
@@ -109,7 +109,8 @@ SET(SRC_PIMAN
             src/gui_impl.h
             src/gui_impl.cpp
 )
-INCLUDE_DIRECTORIES(wxcurl/include)
+INCLUDE_DIRECTORIES(src/wxcurl/include)
+INCLUDE_DIRECTORIES(src/wxcurl)
 
 ADD_LIBRARY(${PACKAGE_NAME} SHARED ${SRC_PIMAN})
 

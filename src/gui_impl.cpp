@@ -54,8 +54,7 @@ void PluginMgrDlgImpl::OnRefresh( wxCommandEvent& event )
 
 void PluginMgrDlgImpl::OnInstall( wxCommandEvent& event )
 {
-    
-    p_plugin->DownloadManifestDataFiles(PluginManifest, url)
+    p_plugin->InstallPlugins(m_plugins_to_install, m_urls_to_install);
     event.Skip();
 }
 
@@ -86,12 +85,36 @@ void PluginMgrDlgImpl::ClearDialog()
     m_iUpdatesAvaliable = 0;
     m_iDownloadSize = 0;
     m_iToInstall = 0;
+    m_plugins_to_install.clear();
+    m_urls_to_install.clear();
     UpdateDownloads();
 }
+
+void PluginMgrDlgImpl::AddDownload( int size, const wxString plugin_name, const wxString url )
+{
+    m_iDownloadSize += size;
+    m_iToInstall++;
+    if ( plugin_name != wxEmptyString )
+        m_plugins_to_install.push_back(plugin_name);
+    if ( url != wxEmptyString )
+        m_urls_to_install.push_back(std::string(url.mb_str()));
+}
+
+void PluginMgrDlgImpl::RemoveDownload( int size, const wxString plugin_name, const wxString url )
+{
+    m_iDownloadSize -= size;
+    m_iToInstall--;
+    if (plugin_name != wxEmptyString)
+        m_plugins_to_install.erase(std::remove(m_plugins_to_install.begin(), m_plugins_to_install.end(), plugin_name), m_plugins_to_install.end());
+    if (url != wxEmptyString)
+        m_urls_to_install.erase(std::remove(m_urls_to_install.begin(), m_urls_to_install.end(), std::string(url.mb_str())), m_urls_to_install.end());
+}
+
 
 PluginPanelImpl::PluginPanelImpl( piman_pi* pi, PluginManifest* manifest, PluginMgrDlgImpl* dlg, wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style ) : PluginPanel( parent, id, pos, size, style )
 {
     p_manifest = manifest;
+    m_pluginName = manifest->GetName();
     p_pi = pi;
     m_iTotalSize = 0;
     p_parent_dlg = dlg;
@@ -205,9 +228,13 @@ void PluginPanelImpl::UpdateSizes()
 void PluginPanelImpl::OnCheckInstall( wxCommandEvent& event )
 {
     if (m_cbInstall->GetValue())
-        p_parent_dlg->AddDownload(m_iTotalSize);
+    {
+        p_parent_dlg->AddDownload(m_iTotalSize, m_pluginName);
+    }
     else
-        p_parent_dlg->RemoveDownload(m_iTotalSize);
+    {
+        p_parent_dlg->RemoveDownload(m_iTotalSize, m_pluginName);
+    }
         
     p_parent_dlg->UpdateDownloads();
 }
@@ -215,17 +242,26 @@ void PluginPanelImpl::OnCheckInstall( wxCommandEvent& event )
 void PluginPanelImpl::OnCheckInstallComponent( wxCommandEvent& event )
 {
     if (m_cbInstall->GetValue())
-        p_parent_dlg->RemoveDownload(m_iTotalSize);
+        p_parent_dlg->RemoveDownload(m_iTotalSize, wxEmptyString);
     DataCheckbox* cb = (DataCheckbox*)event.GetEventObject();
     if ( cb->GetValue() )
         m_iTotalSize += cb->GetDownloadSize();
+        //TODO: Add to the list of downloaded optional URLs
     else
         m_iTotalSize -= cb->GetDownloadSize();
+        //TODO: remove from the list of downloaded optional URLs
     UpdateSizes();
     if (m_cbInstall->GetValue())
-        p_parent_dlg->AddDownload(m_iTotalSize);
+        p_parent_dlg->AddDownload(m_iTotalSize, wxEmptyString);
     p_parent_dlg->UpdateDownloads();
     event.Skip( false );
+}
+
+void PluginPanelImpl::OnUninstall( wxCommandEvent& event )
+{
+    wxButton* btn = (wxButton*)event.GetEventObject();
+    PluginPanelImpl* pnl = (PluginPanelImpl*) btn->GetParent();
+    p_pi->UninstallPlugin( pnl->GetManifest()->GetName() );
 }
 
 PluginPanelImpl::~PluginPanelImpl()

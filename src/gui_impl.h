@@ -30,6 +30,7 @@
 #include "gui.h"
 #include <wx/statline.h>
 #include "PluginManifest.h"
+#include <algorithm>
 
 class piman_pi;
 
@@ -40,6 +41,8 @@ private:
     size_t m_iUpdatesAvaliable;
     size_t m_iDownloadSize;
     size_t m_iToInstall;
+    std::vector<wxString> m_plugins_to_install;
+    std::vector<std::string> m_urls_to_install;
 
 protected:
     virtual void OnRefresh( wxCommandEvent& event );
@@ -51,12 +54,12 @@ public:
     ~PluginMgrDlgImpl();
     void AddPlugin( PluginManifest* manifest );
     void ClearDialog();
-    void SetLastUpdate(time_t last_update) { m_stLastUpdateVal->SetLabel(wxDateTime(last_update).FormatDate()); }
-    void SetNrUpdatesAvailable(size_t updates) { m_stUpdatesAvailableVal->SetLabel(wxString::Format(_T("%i"), updates)); }
-    void SetNrToInstall(size_t updates) { m_stToDownloadVal->SetLabel(wxString::Format(_T("%i"), updates)); }
-    void SetSizeToDownload(size_t size_bytes) { m_stToDownloadVal->SetLabel(wxString::Format(_T("%i kB"), size_bytes / 1024)); }
-    void AddDownload(int size) { m_iDownloadSize += size; m_iToInstall++; }
-    void RemoveDownload(int size) { m_iDownloadSize -= size; m_iToInstall--; }
+    void SetLastUpdate( time_t last_update ) { m_stLastUpdateVal->SetLabel(wxDateTime(last_update).FormatDate()); }
+    void SetNrUpdatesAvailable( size_t updates ) { m_stUpdatesAvailableVal->SetLabel(wxString::Format(_T("%i"), updates)); }
+    void SetNrToInstall( size_t updates ) { m_stToDownloadVal->SetLabel(wxString::Format(_T("%i"), updates)); }
+    void SetSizeToDownload( size_t size_bytes ) { m_stToDownloadVal->SetLabel(wxString::Format(_T("%i kB"), size_bytes / 1024)); }
+    void AddDownload( int size, const wxString plugin_name, const wxString url = wxEmptyString );
+    void RemoveDownload( int size, const wxString plugin_name, const wxString url = wxEmptyString );
     void UpdateDownloads();
 };
 
@@ -67,16 +70,19 @@ private:
     piman_pi* p_pi;
     size_t m_iTotalSize;
     PluginMgrDlgImpl* p_parent_dlg;
+    wxString m_pluginName;
     
     void UpdateSizes();
 
 protected:
     virtual void OnCheckInstall( wxCommandEvent& event );
     virtual void OnCheckInstallComponent( wxCommandEvent& event );
+    virtual void OnUninstall( wxCommandEvent& event );
 
 public:
     PluginPanelImpl( piman_pi* pi, PluginManifest* manifest, PluginMgrDlgImpl* dlg, wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 558,394 ), long style = wxTAB_TRAVERSAL ); 
     ~PluginPanelImpl();
+    PluginManifest *GetManifest() { return p_manifest; }
 };
 
 class PimanSettingsDlgImpl : public PimanSettingsDlg
