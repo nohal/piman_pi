@@ -523,17 +523,21 @@ bool piman_pi::DecompressFile(const wxString tarxz_name, wxString target_path)
         while (res && (entry.reset(tar.GetNextEntry()), entry.get() != NULL))
         {
             wxString fn = entry->GetName();
-            wxString name = target_path.Append(wxFileName::GetPathSeparator()).Append(fn);
+            wxString name = target_path;
+            name.Append(wxFileName::GetPathSeparator()).Append(fn);
             
             wxString outputdir = wxFileName(name).GetPath();
             if (!wxDirExists(outputdir))
-                wxFileName(outputdir).Mkdir(0777, wxPATH_MKDIR_FULL);
+                wxFileName(name).Mkdir(0777, wxPATH_MKDIR_FULL);
             
-            wxFileOutputStream out(name);
-            res = out.IsOk();
-            if (res)
-                out.Write(tar);
-            out.Close();
+            if (!entry->IsDir())
+            {
+                wxFileOutputStream out(name);
+                res = out.IsOk();
+                if (res)
+                    out.Write(tar);
+                out.Close();
+            }
         }
     }
     
